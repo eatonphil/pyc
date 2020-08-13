@@ -45,10 +45,23 @@ class Context():
     def copy(self) -> "Context":
         return copy.deepcopy(self)
 
+    def at_toplevel(self):
+        return self.indentation == 0
+
+    def initialize_variable(self, name, val):
+        if self.at_toplevel():
+            decl = f"PyObject *{name}"
+            self.declarations.write_statement(decl, 0)
+
+            init = f"{name} = {val}"
+            self.initializations.write_statement(init, 1)
+        else:
+            self.body.write_statement(f"PyObject *{name} = {val}", self.indentation)
+
 
 def compile_bin_op(ctx: Context, bo: ast.BinOp) -> str:
     result = ctx.namings.tmp("bo")
-    ctx.body.write_statement(f"PyObject* {result};", ctx.indentation);
+    ctx.body.write_statement(f"PyObject* {result}", ctx.indentation)
 
     if isinstance(bo.op, ast.Add):
         l = compile_expression(ctx, bo.left)
@@ -64,7 +77,9 @@ def compile_bin_op(ctx: Context, bo: ast.BinOp) -> str:
 def compile_expression(ctx: Context, exp) -> str:
     if isinstance(exp, ast.Num):
         # TODO: deal with non-integers
-        return f"PyLong_FromLong({exp.n})"
+        tmp = ctx.namings.tmp()
+        ctx.initialize_variable(tmp, f"PyLong_FromLong({exp.n})")
+        return tmp
     elif isinstance(exp, ast.BinOp):
         return compile_bin_op(ctx, exp)
     elif isinstance(exp, ast.Name):
@@ -77,15 +92,7 @@ def compile_assign(ctx: Context, stmt: ast.Assign):
     # TODO: support assigning to a tuple
     local = ctx.namings.register(stmt.targets[0].id)
     val = compile_expression(ctx, stmt.value)
-
-    if ctx.indentation == 0:
-        decl = f"PyObject *{local}"
-        ctx.declarations.write_statement(decl, 0)
-
-        init = f"{local} = {val}"
-        ctx.initializations.write_statement(init, 1)
-    else:
-        ctx.body.write_statement(f"PyObject *{local} = {val}", ctx.indentation)
+    ctx.initialize_variable(local, val)
 
 
 def compile_function_def(ctx: Context, fd: ast.FunctionDef):
