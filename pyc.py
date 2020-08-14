@@ -69,6 +69,8 @@ def compile_bin_op(ctx: Context, bo: ast.BinOp) -> str:
         # TODO: handle non-longs
         ctx.body.write(f"if (PyLong_Check({l}) && PyLong_Check({r})) {{\n", ctx.indentation)
         ctx.body.write_statement(f"{result} = PyLong_FromLong(PyLong_AsLong({l}) + PyLong_AsLong({r}))", ctx.indentation + 1)
+        ctx.body.write(f"}} else if (PyUnicode_Check({l}) && PyUnicode_Check({r})) {{\n", ctx.indentation)
+        ctx.body.write_statement(f"{result} = PyUnicode_Concat({l}, {r})", ctx.indentation + 1)
         ctx.body.write(f"}} else {{ {result} = PyLong_FromLong(0); }}\n", ctx.indentation)
 
     return result
@@ -80,6 +82,12 @@ def compile_expression(ctx: Context, exp) -> str:
         tmp = ctx.namings.tmp()
         ctx.initialize_variable(tmp, f"PyLong_FromLong({exp.n})")
         return tmp
+    elif isinstance(exp, ast.Constant):
+        if isinstance(exp.value, str):
+            tmp = ctx.namings.tmp()
+            value = exp.value.replace('"', '\\"')
+            ctx.initialize_variable(tmp, f"PyUnicode_FromString(\"{value}\")")
+            return tmp
     elif isinstance(exp, ast.BinOp):
         return compile_bin_op(ctx, exp)
     elif isinstance(exp, ast.Name):
