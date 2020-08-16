@@ -29,8 +29,8 @@ def main():
 
 Compile and run it:
 
-```c
-$ python3 pyc.py tests/recursive_fib.py
+```bash
+$ python3 pyc tests/recursive_fib.py
 $ ./bin/a.out
 102334155
 ```
