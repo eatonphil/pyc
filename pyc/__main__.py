@@ -5,7 +5,7 @@ import shutil
 import sys
 
 from context import Context
-from codegenerator import generate
+from codegen import generate
 
 BUILTINS = {
     "print": "PYC_Print",
@@ -20,7 +20,7 @@ def main():
 
     ctx = Context()
     with open("libpyc.c") as f:
-        ctx.declarations_write(f.read() + "\n")
+        ctx.body_write(f.read() + "\n")
 
     for builtin, fn in BUILTINS.items():
         ctx.register_global(builtin, fn)
@@ -34,7 +34,6 @@ def main():
     os.chdir(outdir)
 
     with open("main.c", "w") as f:
-        f.write(ctx.declarations.content)
         f.write(ctx.body.content)
 
         main = ctx.namings.get("main")["name"]

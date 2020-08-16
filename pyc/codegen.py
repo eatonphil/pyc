@@ -6,7 +6,7 @@ from context import Context
 def initialize_variable(ctx: Context, name: str, val: str):
     if ctx.at_toplevel():
         decl = f"PyObject* {name}"
-        ctx.declarations_write_statement(decl, 0)
+        ctx.body_write_statement(decl, 0)
 
         init = f"{name} = {val}"
         ctx.initializations_write_statement(init)
