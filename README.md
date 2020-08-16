@@ -24,7 +24,7 @@ def fib(n):
 
 
 def main():
-    print(fib(40)) # 203
+    print(fib(40))
 ```
 
 Compile and run it:
