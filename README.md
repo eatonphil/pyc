@@ -27,10 +27,19 @@ def main():
     print(fib(40)) # 203
 ```
 
-And compile it:
+Compile and run it:
 
 ```c
 $ python3 pyc.py tests/recursive_fib.py
+$ ./bin/a.out
+102334155
+```
+
+### Generated code
+
+After compiling, the C program is stored in `bin/main.c`:
+
+```c
 $ cat bin/main.c
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
@@ -123,11 +132,4 @@ int main(int argc, char *argv[]) {
   PyObject *r = main_1();
   return PyLong_AsLong(r);
 }
-```
-
-And run the program built by pyc:
-
-```bash
-$ ./bin/a.out
-102334155
 ```
