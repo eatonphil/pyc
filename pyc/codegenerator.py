@@ -111,7 +111,7 @@ def generate_function_def(ctx: Context, fd: ast.FunctionDef):
 
     childCtx = ctx.copy()
     args = ", ".join([f"PyObject* {childCtx.register_local(a.arg)}" for a in fd.args.args])
-    ctx.body_writeln(f"static PyObject* {name}({args}) {{", 0)
+    ctx.body_writeln(f"PyObject* {name}({args}) {{", 0)
 
     childCtx.scope += 1
     childCtx.indentation += 1
