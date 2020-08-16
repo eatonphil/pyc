@@ -3,6 +3,10 @@
 A simple Python to C compiler written in Python making use of
 libpython.
 
+#### Posts
+
+* [Writing a simple Python compiler: 1. hello, fibonacci](https://notes.eatonphil.com/writing-a-simple-python-compiler.html)
+
 ### Requirements
 
 * GCC
