@@ -261,6 +261,8 @@ def main():
   return PyLong_AsLong(r);
 }}""")
 
+    subprocess.run(["clang-format", "-i", "main.c"])
+
     cflags_raw = subprocess.check_output(["python3-config", "--cflags"])
     cflags = [f.strip() for f in cflags_raw.decode().split(" ") if f.strip()]
     cmd = ["gcc", "-c", "-o", "main.o"] + cflags + ["main.c"]
