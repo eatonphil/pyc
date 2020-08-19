@@ -22,9 +22,9 @@ def generate_bin_op(ctx: Context, binop: ast.BinOp) -> str:
     r = generate_expression(ctx, binop.right)
 
     if isinstance(binop.op, ast.Add):
-        ctx.body_write_statement(f"{result} = PYC_Add({l}, {r})")
+        ctx.body_write_statement(f"{result} = PyNumber_Add({l}, {r})")
     elif isinstance(binop.op, ast.Sub):
-        ctx.body_write_statement(f"{result} = PYC_Sub({l}, {r})")
+        ctx.body_write_statement(f"{result} = PyNumber_Subtract({l}, {r})")
     else:
         raise Exception(f"Unsupported binary operator: {type(binop.op)}")
 
